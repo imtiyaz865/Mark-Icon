@@ -3,17 +3,16 @@ import express from 'express'
 import chatRouter from './routes/chat.js'
 
 const app = express()
-const PORT = Number(process.env.PORT || 8787)
+
+app.disable('x-powered-by')
+app.use(express.json({ limit: '32kb' }))
 
 app.get('/', (request, response) => {
     response.json({
         status: 'ok',
         message: 'MARK ICON API is running.'
     })
-});
-
-app.disable('x-powered-by')
-app.use(express.json({ limit: '32kb' }))
+})
 
 app.use('/api/chat', chatRouter)
 
@@ -22,18 +21,20 @@ app.use((error, request, response, next) => {
         response.status(413).json({ error: 'Request body is too large.' })
         return
     }
+
     if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
         response.status(400).json({ error: 'Invalid request.' })
         return
     }
+
     next(error)
 })
 
 app.use((error, request, response, next) => {
     console.error('Unhandled API error:', error)
-    response.status(500).json({ error: 'The assistant is unavailable right now.' })
+    response.status(500).json({
+        error: 'The assistant is unavailable right now.'
+    })
 })
 
-app.listen(PORT, () => {
-    console.log(`MARK ICON API listening on http://localhost:${PORT}`)
-})
+export default app
