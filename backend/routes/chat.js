@@ -47,7 +47,7 @@ router.post('/', async (request, response) => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
     const result = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+      model: process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
       contents,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
