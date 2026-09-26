@@ -7,14 +7,11 @@ const app = express()
 
 app.disable('x-powered-by')
 
-
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://mark-icon-test.vercel.app/'
-    ]
+    origin: 'https://mark-icon-test.vercel.app',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
 }))
-
 
 app.use(express.json({ limit: '32kb' }))
 
