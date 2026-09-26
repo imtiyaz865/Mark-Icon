@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import express from 'express'
-import chatRouter from './routes/chat.js'
+import markRouter from './routes/chat.js'
 
 const app = express()
 
@@ -14,17 +14,21 @@ app.get('/', (request, response) => {
     })
 })
 
-app.use('/api/chat', chatRouter)
+app.use('/api/chat', markRouter)
 
 app.use((error, request, response, next) => {
-    if (error.type === 'entity.too.large') {
-        response.status(413).json({ error: 'Request body is too large.' })
-        return
+    console.error('Unhandled API error:', error)
+
+    if (error?.type === 'entity.too.large') {
+        return response.status(413).json({
+            error: 'Request body is too large.'
+        })
     }
 
     if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
-        response.status(400).json({ error: 'Invalid request.' })
-        return
+        return response.status(400).json({
+            error: 'Invalid request.'
+        })
     }
 
     next(error)
@@ -32,9 +36,16 @@ app.use((error, request, response, next) => {
 
 app.use((error, request, response, next) => {
     console.error('Unhandled API error:', error)
+
     response.status(500).json({
         error: 'The assistant is unavailable right now.'
     })
+})
+
+const PORT = process.env.PORT || 8787
+
+app.listen(PORT, () => {
+    console.log(`MARK ICON API running on http://localhost:${PORT}`)
 })
 
 export default app
