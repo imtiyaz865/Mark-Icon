@@ -1,11 +1,21 @@
 import 'dotenv/config'
 import express from 'express'
-import markRouter from './routes/chat.js'
 import cors from 'cors'
+import markRouter from './routes/chat.js'
 
 const app = express()
 
 app.disable('x-powered-by')
+
+
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://mark-icon-test.vercel.app/'
+    ]
+}))
+
+
 app.use(express.json({ limit: '32kb' }))
 
 app.get('/', (request, response) => {
@@ -42,13 +52,6 @@ app.use((error, request, response, next) => {
         error: 'The assistant is unavailable right now.'
     })
 })
-
-app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://mark-icon-test.vercel.app/'
-    ]
-}))
 
 const PORT = process.env.PORT || 8787
 
